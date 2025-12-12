@@ -1,8 +1,8 @@
 default:
   image:
-    id: e7654b9d-8888-4e61-9274-d4a0077ed807
+    id: 316ba527-6af9-44ae-a350-07f2122dbaf7
   shared_image:
-    id: 391ffc7e-df1e-4e28-a8ed-e5170d7ad7e9
+    id: cecc0011-e52f-41e2-b1ff-a85c970d81fa
 contents_reading_time:
   seconds: 0
   text: >-
