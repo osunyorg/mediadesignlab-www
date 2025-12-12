@@ -9,8 +9,10 @@ items:
   path: "/posts"
   file: content/fr/posts/_index.html
 - title: Inspirothèque
-  target: https://www.mediadesignlab.osuny.site/projets/inspirotheque/
-  kind: url
+  target: "/inspirotheque/"
+  kind: page
   new_tab: false
   children: []
+  path: "/pages/inspirotheque"
+  file: content/fr/pages/inspirotheque/_index.html
 
