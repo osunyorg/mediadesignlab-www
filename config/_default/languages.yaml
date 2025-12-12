@@ -2,13 +2,30 @@
 
 fr:
   title: >-
-    www
+    Media Design Lab
   contentDir: content/fr
   languageCode: fr
   languageName: Français
   buildFuture: true
   params:
     contact_details:
+      emails:
+        email:
+          label: >-
+            mediadesignlab@lecolededesign.com
+          value: >-
+            mailto:mediadesignlab@lecolededesign.com
+      social_networks:
+        instagram:
+          label: >-
+            media_designlab
+          value: >-
+            https://instagram.com/media_designlab
+        youtube:
+          label: >-
+            media_designlab
+          value: >-
+            https://www.youtube.com/@media_designlab
 
   taxonomies:
     administrator: administrators
