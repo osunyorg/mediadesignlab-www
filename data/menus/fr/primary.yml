@@ -8,4 +8,11 @@ items:
   children: []
   path: "/posts"
   file: content/fr/posts/_index.html
+- title: Inspirothèque
+  target: projets/inspirotheque/
+  kind: url
+  new_tab: false
+  children: []
+  path: "/projects"
+  file: content/fr/projects/_index.html
 
