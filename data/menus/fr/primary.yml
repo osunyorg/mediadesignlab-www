@@ -15,4 +15,11 @@ items:
   children: []
   path: "/pages/inspirotheque"
   file: content/fr/pages/inspirotheque/_index.html
+- title: Équipe
+  target: "/equipe/"
+  kind: page
+  new_tab: false
+  children: []
+  path: "/pages/equipe"
+  file: content/fr/pages/equipe/_index.html
 
