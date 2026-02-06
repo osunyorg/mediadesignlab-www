@@ -10,28 +10,20 @@ contents_reading_time:
 contents:
   - kind: block
     template: chapter
-    title: >-
-      
-    slug: >-
-      
+
+
     ranks:
       base: 2
     top:
       active: false
+
     data:
       layout: no_background
       text: >-
         <p>Ce site documente la vie du Media Design lab. Pour plus d'informations, n'hésitez pas à <a href="https://lecolededesign.com/fr/recherche-labs/le-media-design-lab" target="_blank" rel="noreferrer">consulter la page officielle du lab sur le site de L'École de design Nantes Atlantique <span class="sr-only">(lien externe)</span></a>.</p>
 
-      notes: >-
-        
 
 
-      alt: >-
-        
-
-      credit: >-
-        
 
 
 
