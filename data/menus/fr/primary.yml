@@ -12,13 +12,11 @@ items:
   file: content/fr/posts/_index.html
 - title: Inspirothèque
   slug: inspirotheque
-  target: "/inspirotheque/"
-  kind: page
-  new_tab: false
+  target: https://veille.mediadesignlab.fr
+  kind: url
+  new_tab: true
   children: []
   descendants_targets: []
-  path: "/pages/inspirotheque"
-  file: content/fr/pages/inspirotheque/_index.html
 - title: Équipe
   slug: equipe
   target: "/equipe/"
