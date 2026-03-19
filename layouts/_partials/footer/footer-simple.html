@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="footer-logo">
+    {{ partial "footer/logo.html" }}
+  </div>
+</div>
+<div class="container footer-container-aboutLab">
+  <div>Recherche–Formation–Innovation sur les médias</div>
+  <div class="footer-container-aboutLab-arrow" aria-hidden="true">→</div>
+  <div class="footer-container-aboutLab-div">
+    <img src="/assets/images/logo-defonce.svg" alt="" height="45" width="45"> <a href="https://www.mediadesignlab.fr" target="_blank">Media Design lab</a>
+  </div>
+  <div class="footer-container-aboutLab-arrow" aria-hidden="true">→</div>
+  <div class="footer-container-aboutLab-div">
+    <img src="/assets/images/edna-defonce.svg" alt="" height="45" width="45"> <a href="https://lecolededesign.com" target="_blank">L'École de design Nantes Atlantique</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="footer-social">
+    {{ partial "footer/social.html" . }}
+  </div>
+  <div class="footer-legals">
+    {{ partial "footer/legals.html" . }}
+    {{ if and site.Params.search.active (in site.Params.search.positions "footer") }}
+      <div class="footer-search">
+        {{ partial "commons/search/button.html" "footer" }}
+      </div>
+    {{ end }}
+    {{ partial "footer/credit.html" . }}
+  </div>
+</div>
