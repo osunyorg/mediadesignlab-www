@@ -1,2 +1,57 @@
+.page__home header
+  height: 0;
+  min-height: 0;
+  
 .page__home h1
-  @extend .sr-only // Ça, ça permet de masquer visuellement le titre, mais de le laisser lisible par les lecteurs d'écran
+  @extend .sr-only
+
+
+header
+  .logo
+    display: flex
+    align-items: center
+    gap: 12px
+  
+    .logo-text
+      font-weight: 700 !important
+  
+    &::before
+      content: ""
+      display: block
+      width: 40px
+      height: 40px
+      background-image: url('/assets/images/logo.svg')
+      background-size: contain
+      background-repeat: no-repeat
+      background-position: center
+
+.section-sidebar.post-sidebar
+  .taxonomy-children a,
+  .authors a
+    color: $color-bleulab
+    background-color: $color-vertlab
+    text-decoration: none
+    border: none
+    padding: 0 1px 0 5px;
+  
+    &:hover
+      color: $color-vertlab
+      background-color: $color-bleulab
+
+.block-content .link .link-content:hover
+  background-color: $color-vertlab
+  color: $color-blanclab
+
+.footer-container-aboutLab-div
+  display: flex
+  align-items: center
+  gap: 8px
+
+.footer-container-aboutLab
+  padding-top: 0 !important
+
+.footer-container-aboutLab-arrow
+  display: none
+
+  @include media-breakpoint-up(desktop)
+    display: block
