@@ -1,6 +1,5 @@
-// Librairies
-import './vendors/lightbox';
-// Fichiers du thème nécessaire à son bon fonctionnement
+"use strict";
+
 import './theme/';
 // Customisation
 import './scrollama.min.js';
