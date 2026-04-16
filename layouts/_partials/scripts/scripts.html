@@ -1,7 +1,7 @@
 {{ partial "scripts/plausible.html" . }}
+<script src="/assets/js/scrollama.min.js"></script>
 {{ partial "scripts/js.html" . }}
 {{ partial "scripts/additional.html" . }}
 {{ if or (not hugo.IsProduction) site.Params.debug.active }}
   {{ partial "scripts/debug.html" . }}
 {{ end }}
-<script src="/assets/js/scrollama.min.js"></script>
