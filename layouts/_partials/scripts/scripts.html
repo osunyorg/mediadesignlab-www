@@ -1,0 +1,7 @@
+{{ partial "scripts/plausible.html" . }}
+{{ partial "scripts/js.html" . }}
+{{ partial "scripts/additional.html" . }}
+{{ if or (not hugo.IsProduction) site.Params.debug.active }}
+  {{ partial "scripts/debug.html" . }}
+{{ end }}
+<script src="/js/scrollama.min.js"></script>
