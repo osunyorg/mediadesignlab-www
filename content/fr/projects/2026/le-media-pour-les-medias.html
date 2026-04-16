@@ -1,0 +1,108 @@
+---
+title: >-
+  Le Media pour les médias
+
+subtitle: >-
+  Projets menés par le lab dans l'écosystème médiatique
+
+
+url: "/projets/2026-le-media-pour-les-medias/"
+slug: "le-media-pour-les-medias"
+meta:
+  hugo:
+    permalink: "/projets/2026-le-media-pour-les-medias/"
+    path: "/projects/2026/le-media-pour-les-medias"
+    file: "content/fr/projects/2026/le-media-pour-les-medias.html"
+    slug: "le-media-pour-les-medias"
+  dates:
+    created_at: 2026-04-16T13:21:09+02:00
+    updated_at: 2026-04-16T16:57:18+02:00
+    published_at: 2026-04-16T16:57:17+02:00
+search:
+  id: "52f3c1e7-24b6-4ec3-abec-9680952f73c0"
+  about_id: "3a9df5e3-e928-4514-b256-797a855c0127"
+  url: "/projets/2026-le-media-pour-les-medias/"
+  kind: "Communication::Website::Portfolio::Project::Localization"
+  lang: "fr"
+  title: >-
+    Le Media pour les médias Projets menés par le lab dans l'écosystème médiatique
+
+  body: >-
+    <p>  <br>Ceci est une page qui va charger un scrollytelling sous ce bloc... si ça marche</p>  <p> Test Scrollama </p>
+
+breadcrumbs:
+  - title: >-
+      Media Design Lab
+    path: "/"
+  - title: >-
+      Projets
+    path: "/projets/"
+  - title: >-
+      Le Media pour les médias
+
+design:
+  full_width: true
+  toc:
+    present: false
+    offcanvas: true
+
+translationKey: communication-website-portfolio-project-3a9df5e3-e928-4514-b256-797a855c0127
+
+
+
+
+
+header_cta:
+
+year: 2026
+date: 2026
+
+contents_reading_time:
+  seconds: 4
+  text: >-
+    moins d'une minute
+contents:
+  - kind: block
+    template: chapter
+
+
+    ranks:
+      base: 2
+    top:
+      active: false
+
+    data:
+      layout: no_background
+      text: >-
+        <p>Ceci est une page qui va charger un scrollytelling sous ce bloc... si ça marche</p>
+
+
+
+
+
+
+  - kind: block
+    template: embed
+    title: >-
+      Test Scrollama
+    slug: >-
+      test-scrollama
+    ranks:
+      base: 2
+      self: 2
+    top:
+      active: true
+      title: 
+        value: >-
+          Test Scrollama
+        heading: 2
+
+    data:
+      code: >-
+        <section id="intro">  <h1 class="intro__hed">Basic Example</h1>  <p class="intro__dek">    Start scrolling to see how it works.  </p></section><section id="scrolly">  <article>    <div class="step" data-step="1">      <p>STEP 1</p>    </div>    <div class="step" data-step="2">      <p>STEP 2</p>    </div>    <div class="step" data-step="3">      <p>STEP 3</p>    </div>    <div class="step" data-step="4">      <p>STEP 4</p>    </div>  </article></section><section id="outro"></section><script>		var scrolly = document.querySelector("#scrolly");		var article = scrolly.querySelector("article");		var step = article.querySelectorAll(".step");		// initialize the scrollama		var scroller = scrollama();		// scrollama event handlers		function handleStepEnter(response) {			// response = { element, direction, index }			console.log(response);			// add to color to current step			response.element.classList.add("is-active");		}		function handleStepExit(response) {			// response = { element, direction, index }			console.log(response);			// remove color from current step			response.element.classList.remove("is-active");		}		function init() {			// set random padding for different step heights (not required)			step.forEach(function (step) {				var v = 100 + Math.floor((Math.random() * window.innerHeight) / 4);				step.style.padding = v + "px 0px";			});			// 1. setup the scroller with the bare-bones options			// 		this will also initialize trigger observations			// 2. bind scrollama event handlers (this can be chained like below)			scroller				.setup({					step: "#scrolly article .step",					debug: false,					offset: 0.5				})				.onStepEnter(handleStepEnter)				.onStepExit(handleStepExit);		}		// kick things off		init();	</script>
+
+
+
+
+
+---
