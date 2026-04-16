@@ -3,3 +3,4 @@
 import './theme/';
 // Customisation
 import './scrollama.min.js';
+import './scrollytelling.js'
