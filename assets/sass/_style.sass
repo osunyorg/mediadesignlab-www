@@ -111,3 +111,288 @@ header
     &.is-active p
       background-color: goldenrod
       color: #3b3b3b
+
+
+// ─────────────────────────────────────────────────────────────
+// Media Design Lab — Scrollytelling
+// À ajouter à la suite de la section "Partie provisoire pour scrollama"
+// Reprend $color-bleulab, $color-vertlab, $color-rougelab, $color-blanclab
+// et $heading-font-family (Ronzino) définis dans la config existante.
+// ─────────────────────────────────────────────────────────────
+
+// ── Variables locales (surchargent les valeurs CSS génériques) ──
+// On s'appuie sur les variables SASS du projet plutôt que sur
+// les custom properties CSS du fichier media-design-lab.css.
+// Le fichier media-design-lab.css peut donc être ignoré.
+
+$mdl-transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+$mdl-step-max-width: 28rem
+$mdl-sticky-height: 100svh
+
+
+// ── Intro ────────────────────────────────────────────────────
+.mdl-intro
+  background-color: $color-bleulab
+  color: $color-blanclab
+  padding: 8rem 1.5rem 6rem
+
+  &__inner
+    max-width: 52rem
+    margin: 0 auto
+
+  &__title
+    font-family: $heading-font-family
+    font-size: clamp(2.4rem, 6vw, 5rem)
+    font-weight: 800
+    line-height: 1.05
+    margin-bottom: 2rem
+    letter-spacing: -0.02em
+
+  &__lead
+    font-size: clamp(1rem, 1.8vw, 1.2rem)
+    line-height: 1.7
+    color: rgba($color-blanclab, 0.75)
+    max-width: 42rem
+
+    strong
+      color: $color-blanclab
+      font-weight: 500
+
+
+// ── Chapitre ─────────────────────────────────────────────────
+.mdl-chapter
+  background-color: $color-bleulab
+  color: $color-blanclab
+  padding: 5rem 1.5rem 0
+
+  &__header
+    max-width: 52rem
+    margin: 0 auto 1.5rem
+    display: flex
+    align-items: baseline
+    gap: 1.5rem
+
+    @include media-breakpoint-down(sm)
+      flex-direction: column
+      gap: 0.5rem
+
+  &__number
+    font-family: $heading-font-family
+    font-size: 0.75rem
+    font-weight: 700
+    letter-spacing: 0.15em
+    color: $color-vertlab
+    text-transform: uppercase
+    flex-shrink: 0
+
+  &__title
+    font-family: $heading-font-family
+    font-size: clamp(1.6rem, 3.5vw, 2.6rem)
+    font-weight: 800
+    line-height: 1.1
+    letter-spacing: -0.01em
+
+  &__intro
+    max-width: 52rem
+    margin: 0 auto 4rem
+    font-size: clamp(0.95rem, 1.5vw, 1.1rem)
+    line-height: 1.75
+    color: rgba($color-blanclab, 0.7)
+    // Alignement visuel avec le titre (compense le numéro + gap)
+    padding-left: 3.5rem
+
+    @include media-breakpoint-down(sm)
+      padding-left: 0
+
+
+// ── Scrolly container ────────────────────────────────────────
+.mdl-scrolly
+  position: relative
+
+
+// ── Sticky visual ────────────────────────────────────────────
+.mdl-sticky
+  position: -webkit-sticky
+  position: sticky
+  top: 0
+  width: 100%
+  height: $mdl-sticky-height
+  z-index: 0
+  overflow: hidden
+  background-color: darken($color-bleulab, 5%)
+  transform: translateZ(0)           // force le compositing GPU
+
+  &__media
+    position: absolute
+    inset: 0
+    width: 100%
+    height: 100%
+
+  &__img,
+  &__video
+    width: 100%
+    height: 100%
+    object-fit: cover
+    display: block
+    opacity: 0
+    transition: opacity $mdl-transition
+
+  // Affichage conditionnel piloté par data-active-type (mis à jour en JS)
+  &[data-active-type="image"] &__img
+    opacity: 1
+
+  &[data-active-type="image"] &__video
+    opacity: 0
+
+  &[data-active-type="video"] &__video
+    opacity: 1
+
+  &[data-active-type="video"] &__img
+    opacity: 0
+
+  // Dégradé pour la lisibilité du texte superposé
+  &__overlay
+    position: absolute
+    inset: 0
+    background: linear-gradient(to bottom, rgba($color-bleulab, 0.35) 0%, rgba($color-bleulab, 0.1) 40%, rgba($color-bleulab, 0.6) 100%)
+    pointer-events: none
+
+  // Label contextuel flottant (partenaire, format…)
+  &__label
+    position: absolute
+    top: 1.5rem
+    left: 1.5rem
+    z-index: 2
+    pointer-events: none
+
+  &__label-text
+    display: inline-block
+    font-family: $heading-font-family
+    font-size: 0.72rem
+    font-weight: 700
+    letter-spacing: 0.1em
+    text-transform: uppercase
+    color: rgba($color-blanclab, 0.85)
+    background: rgba($color-bleulab, 0.55)
+    padding: 0.3em 0.75em
+    border-radius: 2rem
+    backdrop-filter: blur(6px)
+    -webkit-backdrop-filter: blur(6px)
+    transition: opacity $mdl-transition
+
+
+// ── Steps ────────────────────────────────────────────────────
+.mdl-steps
+  position: relative
+  z-index: 2
+  padding: 0 1.5rem
+  max-width: $mdl-step-max-width
+  // Colonne décalée à droite pour laisser voir le visuel
+  margin-left: auto
+  margin-right: 3rem
+
+  @include media-breakpoint-down(md)
+    margin-left: auto
+    margin-right: auto
+    max-width: 32rem
+
+  @include media-breakpoint-down(sm)
+    margin: 0
+    padding: 0 1rem
+    max-width: 100%
+
+.mdl-step
+  min-height: 85svh
+  display: flex
+  align-items: center
+  padding: 4rem 0
+
+  &:first-child
+    padding-top: 10rem
+
+  &:last-child
+    padding-bottom: 10rem
+
+  @include media-breakpoint-down(sm)
+    min-height: 60svh
+    align-items: flex-end
+    padding-bottom: 3rem
+
+  // Bulle de texte
+  &__inner
+    background-color: rgba($color-bleulab, 0.9)
+    border-left: 3px solid transparent
+    border-radius: 2px
+    padding: 1.5rem 1.75rem
+    backdrop-filter: blur(8px)
+    -webkit-backdrop-filter: blur(8px)
+    transition: border-color $mdl-transition, background-color $mdl-transition, transform $mdl-transition, box-shadow $mdl-transition
+    transform: translateX(0.5rem)
+    box-shadow: 0 4px 24px rgba($color-bleulab, 0.5)
+
+    @include media-breakpoint-down(sm)
+      padding: 1.25rem
+
+  // Step actif
+  &.is-active &__inner
+    border-color: $color-vertlab
+    background-color: rgba($color-bleulab, 0.97)
+    transform: translateX(0)
+    box-shadow: 0 8px 40px rgba($color-bleulab, 0.7), -4px 0 0 $color-vertlab
+
+  &__title
+    font-family: $heading-font-family
+    font-size: 1.1rem
+    font-weight: 700
+    line-height: 1.25
+    margin-bottom: 0.75rem
+    color: $color-blanclab
+
+    em
+      font-style: italic
+      color: $color-vertlab
+
+  // Paragraphes à l'intérieur des steps
+  // Note : on cible .mdl-step p et non le sélecteur global p
+  // pour ne pas interférer avec les autres styles Osuny
+  p
+    font-size: 0.95rem
+    line-height: 1.7
+    color: rgba($color-blanclab, 0.75)
+    margin-bottom: 0.75rem
+
+    &:last-child
+      margin-bottom: 0
+
+    strong
+      color: $color-blanclab
+      font-weight: 500
+
+    em
+      font-style: italic
+      color: rgba($color-blanclab, 0.9)
+
+
+// ── Outro ────────────────────────────────────────────────────
+.mdl-outro
+  background-color: $color-bleulab
+  color: $color-blanclab
+  padding: 6rem 1.5rem
+
+  &__inner
+    max-width: 52rem
+    margin: 0 auto
+
+  &__text
+    font-size: 1.05rem
+    line-height: 1.7
+    color: rgba($color-blanclab, 0.5)
+
+
+// ── Accessibilité : reduced motion ───────────────────────────
+@media (prefers-reduced-motion: reduce)
+  .mdl-sticky__img,
+  .mdl-sticky__video,
+  .mdl-step__inner,
+  .mdl-sticky__label-text
+    transition: none
