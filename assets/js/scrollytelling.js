@@ -147,6 +147,90 @@
   }
 
 
+/**
+ * Bloc prototype ProtoPie
+ * À ajouter dans scrollytelling-v2.js, dans la fonction init()
+ *
+ * Gère :
+ *  1. Chargement lazy de l'iframe (data-src → src au premier scroll vers la zone)
+ *  2. Neutralisation du conflit scroll page ↔ scroll iframe
+ *  3. Bouton "Continuer" pour reprendre le scroll de la page
+ */
+
+function initProtoBlock(blockId) {
+  var block = document.getElementById(blockId);
+  if (!block) return;
+
+  var iframe    = block.querySelector('.mdl-proto-block__iframe');
+  var closeBtn  = block.querySelector('.mdl-proto-block__close');
+  var isLoaded  = false;
+  var isCapturing = false;
+
+  // ── 1. Lazy load : charger l'iframe seulement quand elle est visible ──
+  var loadObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && !isLoaded) {
+        var src = iframe.dataset.src;
+        if (src) {
+          iframe.src = src;
+          isLoaded = true;
+        }
+        loadObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.1 });
+
+  loadObserver.observe(block);
+
+  // ── 2. Conflit scroll : quand l'utilisateur entre dans l'iframe,
+  //    on laisse le scroll à ProtoPie et on affiche le bouton "Continuer".
+  //    Quand il clique "Continuer", on réactive le scroll de la page.
+
+  function captureScroll() {
+    if (isCapturing) return;
+    isCapturing = true;
+    block.classList.add('is-capturing-scroll');
+    // Bloquer le scroll de la page pendant l'interaction avec le proto
+    document.body.style.overflow = 'hidden';
+  }
+
+  function releaseScroll() {
+    if (!isCapturing) return;
+    isCapturing = false;
+    block.classList.remove('is-capturing-scroll');
+    document.body.style.overflow = '';
+  }
+
+  // Capturer le scroll quand la souris/le doigt entre dans le cadre
+  iframe.addEventListener('mouseenter', captureScroll);
+
+  // Sur mobile : capturer au touch
+  iframe.addEventListener('touchstart', captureScroll, { passive: true });
+
+  // Bouton "Continuer" : libérer le scroll et scroller doucement après le bloc
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      releaseScroll();
+      // Scroll vers l'élément suivant après le bloc proto
+      var nextEl = block.nextElementSibling;
+      if (nextEl) {
+        nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
+  // Libérer automatiquement si la souris quitte la zone complète du bloc
+  block.addEventListener('mouseleave', releaseScroll);
+
+  // Sécurité : libérer si la page est scrollée depuis l'extérieur
+  // (ex: clavier, bouton du navigateur)
+  window.addEventListener('keydown', function (e) {
+    if (isCapturing && (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ')) {
+      releaseScroll();
+    }
+  });
+}
+
   /* ══════════════════════════════════════════════════════════
      POINT D'ENTRÉE
      ══════════════════════════════════════════════════════════ */
@@ -160,6 +244,8 @@
     initScrollyExistant();
 
     initScrollyMDL('scrolly-narrations', 'sticky-narrations', 'steps-narrations');
+
+    initProtoBlock('proto-lemonde-caf');
 
     // Autres sections à activer le moment venu :
     // initScrollyMDL('scrolly-accessibilite', 'sticky-accessibilite', 'steps-accessibilite');
