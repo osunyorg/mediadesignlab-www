@@ -1,21 +1,9 @@
 /**
- * Scrollytelling — fichier JS fusionné
- * ─────────────────────────────────────────────────────────────
- * Gère deux instances scrollama indépendantes sur la même page :
+ * Scrollytelling — V2
+ * Layout : visuel sticky en colonne gauche (contained) / texte colonne droite
  *
- *  1. #scrolly          — section existante (figure + steps génériques)
- *                         Portée originale : exemple Osuny/Scrollama
- *                         Migration : D3 → Vanilla JS, resize CSS-first
- *
- *  2. #scrolly-narrations — section Media Design Lab
- *                           Médias (images/vidéos) pilotés par data-attributes
- *
- * Dépendances (à charger avant ce fichier) :
+ * Dépendance :
  *   <script src="https://unpkg.com/scrollama@3/build/scrollama.min.js"></script>
- *
- * NOTE : D3 n'est plus requis. Si d3 est chargé ailleurs sur la page
- *        pour d'autres usages, il n'y a pas de conflit.
- * ─────────────────────────────────────────────────────────────
  */
 
 (function () {
@@ -23,72 +11,49 @@
 
   /* ══════════════════════════════════════════════════════════
      SECTION 1 — Scroller générique existant (#scrolly)
-     Reproduit fidèlement le comportement de l'exemple Osuny,
-     sans D3 et sans calcul de hauteur JS (CSS s'en charge).
+     Inchangé par rapport à la V1 fusionnée.
      ══════════════════════════════════════════════════════════ */
 
   function initScrollyExistant() {
-    var scrollyEl  = document.querySelector('#scrolly');
-    if (!scrollyEl) return;                        // section absente → on passe
+    var scrollyEl = document.querySelector('#scrolly');
+    if (!scrollyEl) return;
 
     var figure     = scrollyEl.querySelector('figure');
     var article    = scrollyEl.querySelector('article');
-    var steps      = article  ? article.querySelectorAll('.step') : [];
-    var figureText = figure   ? figure.querySelector('p')         : null;
+    var steps      = article ? article.querySelectorAll('.step') : [];
+    var figureText = figure  ? figure.querySelector('p')         : null;
 
     if (!steps.length) return;
 
     var scroller = scrollama();
 
-    // ── Resize ──────────────────────────────────────────────
-    // L'original calculait les hauteurs en JS avec D3.
-    // On conserve uniquement l'appel scroller.resize() ;
-    // les hauteurs sont désormais gérées par CSS (height: 75vh, position: sticky).
-    function handleResize() {
-      scroller.resize();
-    }
-
-    // ── Callback step ────────────────────────────────────────
     function handleStepEnter(response) {
-      // Désactiver tous les steps, activer le courant
       steps.forEach(function (s, i) {
         s.classList.toggle('is-active', i === response.index);
       });
-
-      // Mettre à jour le compteur dans la figure
-      if (figureText) {
-        figureText.textContent = response.index + 1;
-      }
+      if (figureText) figureText.textContent = response.index + 1;
     }
 
-    // ── Init ─────────────────────────────────────────────────
     scroller
-      .setup({
-        step:   '#scrolly article .step',
-        offset: 0.33,
-        debug:  false
-      })
+      .setup({ step: '#scrolly article .step', offset: 0.33, debug: false })
       .onStepEnter(handleStepEnter);
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', function () { scroller.resize(); });
   }
 
 
   /* ══════════════════════════════════════════════════════════
-     SECTION 2 — Media Design Lab (#scrolly-narrations, etc.)
-     Médias (images / vidéos) pilotés par data-attributes sur
-     chaque .mdl-step. Extensible à n'importe quel nombre
-     de sections en appelant initScrollyMDL() plusieurs fois.
+     SECTION 2 — Media Design Lab
+     Différences V2 :
+     - Le sticky est une colonne flex, pas un fond plein écran.
+     - object-fit: contain → pas besoin de gérer des dimensions.
+     - La vidéo joue dans son cadre naturel (hauteur auto).
+     - On retire la pause "fin de section" car le sticky sort
+       naturellement du viewport avec le reste du contenu.
      ══════════════════════════════════════════════════════════ */
 
   /**
-   * Injecte et affiche un média dans le sticky.
-   *
-   * @param {HTMLElement} stickyEl
-   * @param {string}      type     'image' | 'video'
-   * @param {string}      src
-   * @param {string}      alt
-   * @param {string}      label
+   * Met à jour le visuel dans la colonne sticky.
    */
   function updateStickyMedia(stickyEl, type, src, alt, label) {
     var img     = stickyEl.querySelector('.mdl-sticky__img');
@@ -97,7 +62,6 @@
 
     if (labelEl) labelEl.textContent = label || '';
 
-    // Le type est lu par CSS pour piloter les opacités
     stickyEl.dataset.activeType = type || 'image';
 
     if (type === 'image' && img) {
@@ -112,7 +76,7 @@
         video.src = src;
         video.load();
         video.addEventListener('loadedmetadata', function onReady() {
-          video.play().catch(function () { /* autoplay bloqué → silencieux */ });
+          video.play().catch(function () {});
           video.removeEventListener('loadedmetadata', onReady);
         });
       } else {
@@ -122,37 +86,36 @@
     }
   }
 
-  function pauseCurrentVideo(stickyEl) {
-    var video = stickyEl.querySelector('.mdl-sticky__video');
-    if (video && !video.paused) video.pause();
-  }
-
   /**
-   * Initialise une section MDL scrollytelling.
+   * Initialise une section MDL.
    *
-   * @param {string} scrollyId  id de l'élément .mdl-scrolly
-   * @param {string} stickyId   id de l'élément .mdl-sticky
-   * @param {string} stepsId    id de l'élément article.mdl-steps
+   * @param {string} scrollyId
+   * @param {string} stickyId
+   * @param {string} stepsId
+   * @param {number} [offset=0.4]  — seuil de déclenchement (0–1)
+   *   Valeur recommandée pour le layout colonne :
+   *   0.4 déclenche le changement quand le step atteint 40% de l'écran,
+   *   ce qui correspond visuellement au centre de la colonne visuelle.
    */
-  function initScrollyMDL(scrollyId, stickyId, stepsId) {
+  function initScrollyMDL(scrollyId, stickyId, stepsId, offset) {
     var scrollyEl = document.getElementById(scrollyId);
     if (!scrollyEl) return;
 
-    var stickyEl  = document.getElementById(stickyId);
-    var stepsEl   = document.getElementById(stepsId);
+    var stickyEl = document.getElementById(stickyId);
+    var stepsEl  = document.getElementById(stepsId);
     if (!stickyEl || !stepsEl) return;
 
     var steps = stepsEl.querySelectorAll('.mdl-step');
     if (!steps.length) return;
 
-    // ── Afficher le premier média dès le chargement ──────────
-    var firstStep = steps[0];
+    // Afficher le premier média immédiatement
+    var first = steps[0];
     updateStickyMedia(
       stickyEl,
-      firstStep.dataset.mediaType || 'image',
-      firstStep.dataset.mediaSrc  || '',
-      firstStep.dataset.mediaAlt  || '',
-      firstStep.dataset.label     || ''
+      first.dataset.mediaType || 'image',
+      first.dataset.mediaSrc  || '',
+      first.dataset.mediaAlt  || '',
+      first.dataset.label     || ''
     );
 
     var scroller = scrollama();
@@ -160,7 +123,7 @@
     scroller
       .setup({
         step:   '#' + scrollyId + ' .mdl-step',
-        offset: 0.5,
+        offset: offset !== undefined ? offset : 0.4,
         debug:  false
       })
       .onStepEnter(function (response) {
@@ -176,17 +139,11 @@
           el.dataset.mediaAlt  || '',
           el.dataset.label     || ''
         );
-      })
-      .onStepExit(function (response) {
-        // Pause vidéo en fin de section (scroll descendant)
-        if (response.index === steps.length - 1 && response.direction === 'down') {
-          pauseCurrentVideo(stickyEl);
-        }
       });
+      // Pas de onStepExit nécessaire en layout colonne :
+      // le sticky sort du viewport naturellement avec le scroll.
 
-    window.addEventListener('resize', function () {
-      scroller.resize();
-    });
+    window.addEventListener('resize', function () { scroller.resize(); });
   }
 
 
@@ -196,17 +153,15 @@
 
   function init() {
     if (typeof scrollama === 'undefined') {
-      console.warn('[Scrollytelling] scrollama.js introuvable — vérifiez le chargement du script.');
+      console.warn('[Scrollytelling] scrollama.js introuvable.');
       return;
     }
 
-    // Section générique existante
     initScrollyExistant();
 
-    // Section(s) Media Design Lab
     initScrollyMDL('scrolly-narrations', 'sticky-narrations', 'steps-narrations');
 
-    // Décommenter pour ajouter d'autres sections :
+    // Autres sections à activer le moment venu :
     // initScrollyMDL('scrolly-accessibilite', 'sticky-accessibilite', 'steps-accessibilite');
   }
 
