@@ -1,9 +1,9 @@
 /**
- * Scrollytelling — V2
- * Layout : visuel sticky en colonne gauche (contained) / texte colonne droite
- *
- * Dépendance :
- *   <script src="https://unpkg.com/scrollama@3/build/scrollama.min.js"></script>
+ * Scrollytelling — V2.1
+ * Correctifs :
+ *  - IDs de sections individualisés (scrolly-01, scrolly-02…)
+ *  - initProtoBlock : chargement immédiat si déjà visible + fallback sans IntersectionObserver
+ *  - mockup=false dans l'URL ProtoPie pour affichage pleine largeur sur desktop
  */
 
 (function () {
@@ -11,7 +11,6 @@
 
   /* ══════════════════════════════════════════════════════════
      SECTION 1 — Scroller générique existant (#scrolly)
-     Inchangé par rapport à la V1 fusionnée.
      ══════════════════════════════════════════════════════════ */
 
   function initScrollyExistant() {
@@ -43,25 +42,15 @@
 
 
   /* ══════════════════════════════════════════════════════════
-     SECTION 2 — Media Design Lab
-     Différences V2 :
-     - Le sticky est une colonne flex, pas un fond plein écran.
-     - object-fit: contain → pas besoin de gérer des dimensions.
-     - La vidéo joue dans son cadre naturel (hauteur auto).
-     - On retire la pause "fin de section" car le sticky sort
-       naturellement du viewport avec le reste du contenu.
+     SECTION 2 — Media Design Lab (sticky colonne + steps)
      ══════════════════════════════════════════════════════════ */
 
-  /**
-   * Met à jour le visuel dans la colonne sticky.
-   */
   function updateStickyMedia(stickyEl, type, src, alt, label) {
     var img     = stickyEl.querySelector('.mdl-sticky__img');
     var video   = stickyEl.querySelector('.mdl-sticky__video');
     var labelEl = stickyEl.querySelector('.mdl-sticky__label-text');
 
     if (labelEl) labelEl.textContent = label || '';
-
     stickyEl.dataset.activeType = type || 'image';
 
     if (type === 'image' && img) {
@@ -86,17 +75,6 @@
     }
   }
 
-  /**
-   * Initialise une section MDL.
-   *
-   * @param {string} scrollyId
-   * @param {string} stickyId
-   * @param {string} stepsId
-   * @param {number} [offset=0.4]  — seuil de déclenchement (0–1)
-   *   Valeur recommandée pour le layout colonne :
-   *   0.4 déclenche le changement quand le step atteint 40% de l'écran,
-   *   ce qui correspond visuellement au centre de la colonne visuelle.
-   */
   function initScrollyMDL(scrollyId, stickyId, stepsId, offset) {
     var scrollyEl = document.getElementById(scrollyId);
     if (!scrollyEl) return;
@@ -108,7 +86,7 @@
     var steps = stepsEl.querySelectorAll('.mdl-step');
     if (!steps.length) return;
 
-    // Afficher le premier média immédiatement
+    // Premier média affiché immédiatement
     var first = steps[0];
     updateStickyMedia(
       stickyEl,
@@ -128,7 +106,6 @@
       })
       .onStepEnter(function (response) {
         var el = response.element;
-
         steps.forEach(function (s) { s.classList.remove('is-active'); });
         el.classList.add('is-active');
 
@@ -140,96 +117,96 @@
           el.dataset.label     || ''
         );
       });
-      // Pas de onStepExit nécessaire en layout colonne :
-      // le sticky sort du viewport naturellement avec le scroll.
 
     window.addEventListener('resize', function () { scroller.resize(); });
   }
 
 
-/**
- * Bloc prototype ProtoPie
- * À ajouter dans scrollytelling-v2.js, dans la fonction init()
- *
- * Gère :
- *  1. Chargement lazy de l'iframe (data-src → src au premier scroll vers la zone)
- *  2. Neutralisation du conflit scroll page ↔ scroll iframe
- *  3. Bouton "Continuer" pour reprendre le scroll de la page
- */
+  /* ══════════════════════════════════════════════════════════
+     SECTION 3 — Bloc prototype ProtoPie
+     Corrections V2.1 :
+     - Chargement immédiat si le bloc est déjà visible au load
+     - Fallback sans IntersectionObserver
+     - Gestion scroll page ↔ iframe
+     ══════════════════════════════════════════════════════════ */
 
-function initProtoBlock(blockId) {
-  var block = document.getElementById(blockId);
-  if (!block) return;
+  function initProtoBlock(blockId) {
+    var block = document.getElementById(blockId);
+    if (!block) return;
 
-  var iframe    = block.querySelector('.mdl-proto-block__iframe');
-  var closeBtn  = block.querySelector('.mdl-proto-block__close');
-  var isLoaded  = false;
-  var isCapturing = false;
+    var iframe   = block.querySelector('.mdl-proto-block__iframe');
+    var closeBtn = block.querySelector('.mdl-proto-block__close');
+    if (!iframe) return;
 
-  // ── 1. Lazy load : charger l'iframe seulement quand elle est visible ──
-  var loadObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting && !isLoaded) {
-        var src = iframe.dataset.src;
-        if (src) {
-          iframe.src = src;
-          isLoaded = true;
-        }
-        loadObserver.disconnect();
-      }
-    });
-  }, { threshold: 0.1 });
+    var isLoaded    = false;
+    var isCapturing = false;
 
-  loadObserver.observe(block);
-
-  // ── 2. Conflit scroll : quand l'utilisateur entre dans l'iframe,
-  //    on laisse le scroll à ProtoPie et on affiche le bouton "Continuer".
-  //    Quand il clique "Continuer", on réactive le scroll de la page.
-
-  function captureScroll() {
-    if (isCapturing) return;
-    isCapturing = true;
-    block.classList.add('is-capturing-scroll');
-    // Bloquer le scroll de la page pendant l'interaction avec le proto
-    document.body.style.overflow = 'hidden';
-  }
-
-  function releaseScroll() {
-    if (!isCapturing) return;
-    isCapturing = false;
-    block.classList.remove('is-capturing-scroll');
-    document.body.style.overflow = '';
-  }
-
-  // Capturer le scroll quand la souris/le doigt entre dans le cadre
-  iframe.addEventListener('mouseenter', captureScroll);
-
-  // Sur mobile : capturer au touch
-  iframe.addEventListener('touchstart', captureScroll, { passive: true });
-
-  // Bouton "Continuer" : libérer le scroll et scroller doucement après le bloc
-  if (closeBtn) {
-    closeBtn.addEventListener('click', function () {
-      releaseScroll();
-      // Scroll vers l'élément suivant après le bloc proto
-      var nextEl = block.nextElementSibling;
-      if (nextEl) {
-        nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  }
-
-  // Libérer automatiquement si la souris quitte la zone complète du bloc
-  block.addEventListener('mouseleave', releaseScroll);
-
-  // Sécurité : libérer si la page est scrollée depuis l'extérieur
-  // (ex: clavier, bouton du navigateur)
-  window.addEventListener('keydown', function (e) {
-    if (isCapturing && (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ')) {
-      releaseScroll();
+    // ── Chargement de l'iframe ──────────────────────────────
+    function loadIframe() {
+      if (isLoaded) return;
+      var src = iframe.dataset.src;
+      if (!src) return;
+      iframe.src = src;
+      isLoaded = true;
     }
-  });
-}
+
+    // Utiliser IntersectionObserver si disponible, sinon charger direct
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            loadIframe();
+            observer.disconnect();
+          }
+        });
+      }, {
+        // threshold bas : commence à charger dès que 5% du bloc est visible
+        threshold: 0.05,
+        // rootMargin positif : précharge 200px avant que le bloc soit visible
+        rootMargin: '200px 0px'
+      });
+      observer.observe(block);
+    } else {
+      // Navigateurs anciens : charger immédiatement
+      loadIframe();
+    }
+
+    // ── Gestion conflit scroll page ↔ iframe ────────────────
+    function captureScroll() {
+      if (isCapturing) return;
+      isCapturing = true;
+      block.classList.add('is-capturing-scroll');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function releaseScroll() {
+      if (!isCapturing) return;
+      isCapturing = false;
+      block.classList.remove('is-capturing-scroll');
+      document.body.style.overflow = '';
+    }
+
+    iframe.addEventListener('mouseenter', captureScroll);
+    iframe.addEventListener('touchstart', captureScroll, { passive: true });
+    block.addEventListener('mouseleave', releaseScroll);
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        releaseScroll();
+        var nextEl = block.nextElementSibling;
+        if (nextEl) {
+          nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    window.addEventListener('keydown', function (e) {
+      if (isCapturing && (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ')) {
+        releaseScroll();
+      }
+    });
+  }
+
 
   /* ══════════════════════════════════════════════════════════
      POINT D'ENTRÉE
@@ -241,14 +218,21 @@ function initProtoBlock(blockId) {
       return;
     }
 
+    // Scroller existant (si présent sur la page)
     initScrollyExistant();
 
-    initScrollyMDL('scrolly-narrations', 'sticky-narrations', 'steps-narrations');
+    // Chapitre 01
+    initScrollyMDL('scrolly-01', 'sticky-01', 'steps-01');
 
+    // Chapitre 02
+    initScrollyMDL('scrolly-02', 'sticky-02', 'steps-02');
+
+    // Blocs prototypes
     initProtoBlock('proto-lemonde-caf');
 
-    // Autres sections à activer le moment venu :
-    // initScrollyMDL('scrolly-accessibilite', 'sticky-accessibilite', 'steps-accessibilite');
+    // Ajouter ici les prochains chapitres et prototypes :
+    // initScrollyMDL('scrolly-03', 'sticky-03', 'steps-03');
+    // initProtoBlock('proto-epstein');
   }
 
   if (document.readyState === 'loading') {
