@@ -216,14 +216,18 @@ $mdl-padding-h: 2.5rem   // padding horizontal global de la section
 
 // ── Sticky — colonne visuelle ─────────────────────────────────
 .mdl-sticky
-  // Mobile : bloc normal, centré, avant le texte
+  // Mobile : pleine largeur, pas de padding latéral pour maximiser l'image
   position: relative
   width: 100%
-  padding: 2rem $mdl-padding-h
+  // Débordement hors des marges du parent (.mdl-chapter padding)
+  margin-left: calc(-1 * $mdl-padding-h)
+  margin-right: calc(-1 * $mdl-padding-h)
+  width: calc(100% + 2 * $mdl-padding-h)
+  padding: 1.5rem 0 0.75rem   // padding vertical seulement
   display: flex
   flex-direction: column
   align-items: center
-  gap: 1rem
+  gap: 0.75rem
 
   // Desktop : colonne gauche, collante
   @include media-breakpoint-up(md)
@@ -247,14 +251,17 @@ $mdl-padding-h: 2.5rem   // padding horizontal global de la section
   &__video
     width: 100%
     height: auto                       // hauteur naturelle du média
-    max-height: 80svh                  // plafond pour éviter les images trop hautes
+    max-height: 92svh                  // plafond généreux — laisse respirer sur mobile
     object-fit: contain                // ← clé : pas de rognure, marges automatiques
     display: block
     border-radius: 4px
     opacity: 0
     transition: opacity $mdl-transition
-    // Légère ombre pour détacher le visuel du fond sombre
     box-shadow: 0 8px 48px rgba(darken($color-bleulab, 8%), 0.7)
+
+    // Sur desktop, on peut contraindre davantage la hauteur max
+    @include media-breakpoint-up(md)
+      max-height: 80svh
 
   // Affichage conditionnel piloté par data-active-type (JS)
   &[data-active-type="image"] &__img
@@ -399,5 +406,6 @@ $mdl-padding-h: 2.5rem   // padding horizontal global de la section
   .mdl-step__inner,
   .mdl-sticky__label-text
     transition: none
+
 
 
