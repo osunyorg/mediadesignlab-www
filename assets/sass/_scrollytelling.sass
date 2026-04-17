@@ -1,0 +1,417 @@
+// ─────────────────────────────────────────────────────────────
+// Media Design Lab — Scrollytelling V2
+// ─────────────────────────────────────────────────────────────
+
+$mdl-transition: 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+$mdl-col-media: 60%      // colonne visuelle — plus large pour les images
+$mdl-col-text: 40%       // colonne texte
+$mdl-gap: 2rem           // gouttière réduite pour laisser plus d'espace au visuel
+$mdl-padding-h: 2.5rem   // padding horizontal global
+
+
+// ── Intro ────────────────────────────────────────────────────
+.mdl-intro
+  background-color: $color-bleulab
+  color: $color-blanclab
+  padding: 8rem $mdl-padding-h 6rem
+
+  &__inner
+    max-width: 60rem
+    margin: 0 auto
+
+  &__title
+    font-family: $heading-font-family
+    font-size: clamp(2.4rem, 6vw, 5rem)
+    font-weight: 800
+    line-height: 1.05
+    margin-bottom: 2rem
+    letter-spacing: -0.02em
+
+  &__lead
+    font-size: clamp(1rem, 1.8vw, 1.2rem)
+    line-height: 1.7
+    color: rgba($color-blanclab, 0.72)
+    max-width: 44rem
+
+    strong
+      color: $color-blanclab
+      font-weight: 500
+
+
+// ── Chapitre ─────────────────────────────────────────────────
+.mdl-chapter
+  background-color: $color-bleulab
+  color: $color-blanclab
+  padding: 5rem $mdl-padding-h 0
+
+  &__header
+    max-width: 60rem
+    margin: 0 auto 1.25rem
+    display: flex
+    align-items: baseline
+    gap: 1.5rem
+
+    @include media-breakpoint-down(sm)
+      flex-direction: column
+      gap: 0.4rem
+
+  &__number
+    font-family: $heading-font-family
+    font-size: 0.7rem
+    font-weight: 700
+    letter-spacing: 0.18em
+    color: $color-vertlab
+    text-transform: uppercase
+    flex-shrink: 0
+
+  &__title
+    font-family: $heading-font-family
+    font-size: clamp(1.5rem, 3vw, 2.4rem)
+    font-weight: 800
+    line-height: 1.1
+    letter-spacing: -0.01em
+
+  &__intro
+    max-width: 60rem
+    margin: 0 auto 3rem
+    font-size: clamp(0.95rem, 1.4vw, 1.05rem)
+    line-height: 1.75
+    color: rgba($color-blanclab, 0.65)
+    padding-left: 3.5rem
+
+    @include media-breakpoint-down(sm)
+      padding-left: 0
+
+
+// ── Scrolly container ────────────────────────────────────────
+.mdl-scrolly
+  position: relative
+  background-color: $color-bleulab
+
+  @include media-breakpoint-up(md)
+    display: flex
+    flex-direction: row
+    align-items: flex-start
+    // Pas de padding horizontal ici : géré dans chaque colonne
+    // pour que la colonne visuelle puisse coller au bord gauche
+    padding: 0
+
+
+// ── Sticky — colonne visuelle ─────────────────────────────────
+.mdl-sticky
+  // Mobile : pleine largeur, déborde des marges du parent
+  position: relative
+  margin-left: calc(-1 * $mdl-padding-h)
+  margin-right: calc(-1 * $mdl-padding-h)
+  width: calc(100% + 2 * $mdl-padding-h)
+  padding: 1.5rem 0 0.75rem
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 0.75rem
+
+  // Desktop : colonne gauche collante
+  @include media-breakpoint-up(md)
+    position: sticky
+    top: 0                              // colle en haut du viewport
+    // Largeur = col-media, sans padding horizontal superflu
+    width: $mdl-col-media
+    flex-shrink: 0
+    margin: 0                           // annule les marges négatives mobile
+    // Padding interne : serré pour maximiser la surface de l'image
+    padding: 2rem $mdl-gap 2rem $mdl-padding-h
+    align-self: flex-start             // CRUCIAL pour que sticky fonctionne dans flex
+    // Hauteur = viewport pour que l'image soit toujours centrée face au texte
+    min-height: 100svh
+    justify-content: center
+
+  // Cadre image/vidéo
+  &__frame
+    width: 100%
+    display: flex
+    align-items: center
+    justify-content: center
+
+  &__img,
+  &__video
+    width: 100%
+    height: auto
+    // Desktop : l'image peut occuper presque tout le viewport en hauteur
+    max-height: 92svh
+    object-fit: contain                // pas de rognure
+    display: block
+    border-radius: 4px
+    opacity: 0
+    transition: opacity $mdl-transition
+    box-shadow: 0 8px 48px rgba(darken($color-bleulab, 8%), 0.6)
+
+    // Mobile : plafond un peu plus bas pour laisser de l'air
+    @include media-breakpoint-down(sm)
+      max-height: 75svh
+
+  // Affichage conditionnel piloté par data-active-type (JS)
+  &[data-active-type="image"] &__img
+    opacity: 1
+
+  &[data-active-type="image"] &__video
+    opacity: 0
+
+  &[data-active-type="video"] &__video
+    opacity: 1
+
+  &[data-active-type="video"] &__img
+    opacity: 0
+
+  // Label contextuel sous le visuel
+  &__label
+    margin: 0
+    text-align: center
+
+    @include media-breakpoint-up(md)
+      text-align: left
+      padding-left: $mdl-padding-h
+
+  &__label-text
+    display: inline-block
+    font-family: $heading-font-family
+    font-size: 0.68rem
+    font-weight: 700
+    letter-spacing: 0.12em
+    text-transform: uppercase
+    color: rgba($color-blanclab, 0.5)
+    transition: opacity $mdl-transition
+
+
+// ── Steps — colonne texte ─────────────────────────────────────
+.mdl-steps
+  position: relative
+  z-index: 2
+  padding: 0 $mdl-padding-h
+
+  @include media-breakpoint-up(md)
+    width: $mdl-col-text
+    flex-shrink: 0
+    padding: 0 $mdl-padding-h 0 0
+    padding-top: 2rem
+
+.mdl-step
+  display: flex
+  align-items: center
+  padding: 3rem 0
+  min-height: 70svh                    // plus généreux pour aligner avec l'image
+
+  &:first-child
+    padding-top: 6rem
+
+  &:last-child
+    padding-bottom: 10rem              // espace de sortie après le dernier step
+
+  @include media-breakpoint-down(sm)
+    min-height: 30svh
+    padding: 2rem 0
+
+    &:first-child
+      padding-top: 3rem
+
+    &:last-child
+      padding-bottom: 4rem
+
+  // Bulle de texte
+  &__inner
+    width: 100%
+    padding: 1.5rem 1.75rem
+    border-left: 3px solid transparent
+    border-radius: 2px
+    transition: border-color $mdl-transition, opacity $mdl-transition, transform $mdl-transition
+    opacity: 0.4
+    transform: translateX(0.75rem)
+
+    @include media-breakpoint-down(sm)
+      padding: 1.25rem
+      transform: none
+      opacity: 0.7
+
+  // Step actif
+  &.is-active &__inner
+    border-color: $color-vertlab
+    opacity: 1
+    transform: translateX(0)
+
+  &__title
+    font-family: $heading-font-family
+    font-size: 1.05rem
+    font-weight: 700
+    line-height: 1.3
+    margin-bottom: 0.75rem
+    color: $color-blanclab
+
+    em
+      font-style: italic
+      color: $color-vertlab
+
+  p
+    font-size: 0.92rem
+    line-height: 1.72
+    color: rgba($color-blanclab, 0.68)
+    margin-bottom: 0.65rem
+
+    &:last-child
+      margin-bottom: 0
+
+    strong
+      color: $color-blanclab
+      font-weight: 500
+
+    em
+      font-style: italic
+      color: rgba($color-blanclab, 0.88)
+
+
+// ── Outro ────────────────────────────────────────────────────
+.mdl-outro
+  background-color: $color-bleulab
+  color: $color-blanclab
+  padding: 6rem $mdl-padding-h
+
+  &__inner
+    max-width: 60rem
+    margin: 0 auto
+
+  &__text
+    font-size: 1rem
+    line-height: 1.7
+    color: rgba($color-blanclab, 0.45)
+
+
+// ── Accessibilité : reduced motion ───────────────────────────
+@media (prefers-reduced-motion: reduce)
+  .mdl-sticky__img,
+  .mdl-sticky__video,
+  .mdl-step__inner,
+  .mdl-sticky__label-text
+    transition: none
+
+
+// ─────────────────────────────────────────────────────────────
+// Bloc prototype — pleine largeur, hors du pattern sticky
+// ─────────────────────────────────────────────────────────────
+
+.mdl-proto-block
+  background-color: $color-bleulab
+  color: $color-blanclab
+  // Hors du flow .mdl-steps → padding propre
+  padding: 3rem $mdl-padding-h 4rem
+  border-top: 1px solid rgba($color-blanclab, 0.1)
+  // Sortir du flex parent .mdl-steps si imbriqué
+  // (en pratique il vaut mieux le placer hors de article.mdl-steps,
+  //  cf. correctif HTML)
+  width: 100%
+  box-sizing: border-box
+
+  &__header
+    max-width: 100%
+    margin: 0 0 1.5rem
+    display: flex
+    flex-direction: column
+    gap: 0.5rem
+
+  &__label
+    font-family: $heading-font-family
+    font-size: 0.7rem
+    font-weight: 700
+    letter-spacing: 0.15em
+    text-transform: uppercase
+    color: $color-vertlab
+
+  &__title
+    font-family: $heading-font-family
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem)
+    font-weight: 800
+    line-height: 1.15
+    letter-spacing: -0.01em
+
+  &__hint
+    font-size: 0.88rem
+    color: rgba($color-blanclab, 0.5)
+    display: flex
+    align-items: center
+    gap: 1.5rem
+    flex-wrap: wrap
+
+  &__close
+    display: none
+    font-family: $heading-font-family
+    font-size: 0.78rem
+    font-weight: 700
+    letter-spacing: 0.08em
+    text-transform: uppercase
+    color: $color-bleulab
+    background-color: $color-vertlab
+    border: none
+    padding: 0.4em 1em
+    border-radius: 2rem
+    cursor: pointer
+    transition: opacity 0.2s
+
+    &:hover
+      opacity: 0.8
+
+    .mdl-proto-block.is-capturing-scroll &
+      display: inline-block
+
+  // ── Cadre iframe ─────────────────────────────────────────
+  &__frame-wrap
+    position: relative
+    width: 100%
+    // Hauteur généreuse — le prototype doit être confortable
+    height: 85svh
+    border-radius: 8px
+    overflow: hidden
+    background-color: darken($color-bleulab, 6%)
+    box-shadow: 0 16px 64px rgba(darken($color-bleulab, 15%), 0.5)
+
+    // Desktop : pleine largeur disponible, pas de restriction à 400px
+    // Le prototype ProtoPie gère lui-même le scaleToFit
+    @include media-breakpoint-up(md)
+      height: 90svh                    // encore plus grand sur desktop
+
+  &__iframe
+    width: 100%
+    height: 100%
+    border: none
+    display: block
+
+
+// ── Lien de repli mobile ──────────────────────────────────────
+.mdl-step__cta
+  margin-top: 1rem
+
+.mdl-proto-link
+  display: inline-flex
+  align-items: center
+  gap: 0.4em
+  font-family: $heading-font-family
+  font-size: 0.82rem
+  font-weight: 700
+  letter-spacing: 0.06em
+  text-transform: uppercase
+  color: $color-vertlab
+  text-decoration: none
+  border: 1px solid rgba($color-vertlab, 0.4)
+  padding: 0.45em 1em
+  border-radius: 2rem
+  transition: background-color 0.2s, color 0.2s
+
+  &:hover
+    background-color: $color-vertlab
+    color: $color-bleulab
+    border-color: $color-vertlab
+
+  @include media-breakpoint-up(md)
+    display: none
+
+
+// ── État scroll capturé ───────────────────────────────────────
+.mdl-proto-block.is-capturing-scroll
+  .mdl-proto-block__frame-wrap
+    box-shadow: 0 0 0 2px $color-vertlab, 0 16px 64px rgba(darken($color-bleulab, 15%), 0.5)
