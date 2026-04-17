@@ -114,30 +114,26 @@ header
 
 
 // ─────────────────────────────────────────────────────────────
-// Media Design Lab — Scrollytelling
-// À ajouter à la suite de la section "Partie provisoire pour scrollama"
-// Reprend $color-bleulab, $color-vertlab, $color-rougelab, $color-blanclab
-// et $heading-font-family (Ronzino) définis dans la config existante.
+// Media Design Lab — Scrollytelling V2
+// Layout éditorial : visuel containé à gauche / texte à droite
+// Remplace entièrement le bloc V1 dans _style.sass
 // ─────────────────────────────────────────────────────────────
 
-// ── Variables locales (surchargent les valeurs CSS génériques) ──
-// On s'appuie sur les variables SASS du projet plutôt que sur
-// les custom properties CSS du fichier media-design-lab.css.
-// Le fichier media-design-lab.css peut donc être ignoré.
-
-$mdl-transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-$mdl-step-max-width: 28rem
-$mdl-sticky-height: 100svh
+$mdl-transition: 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+$mdl-col-media: 55%      // largeur de la colonne visuelle sur desktop
+$mdl-col-text: 45%       // largeur de la colonne texte sur desktop
+$mdl-gap: 3rem           // gouttière entre les deux colonnes
+$mdl-padding-h: 2.5rem   // padding horizontal global de la section
 
 
 // ── Intro ────────────────────────────────────────────────────
 .mdl-intro
   background-color: $color-bleulab
   color: $color-blanclab
-  padding: 8rem 1.5rem 6rem
+  padding: 8rem $mdl-padding-h 6rem
 
   &__inner
-    max-width: 52rem
+    max-width: 60rem
     margin: 0 auto
 
   &__title
@@ -151,8 +147,8 @@ $mdl-sticky-height: 100svh
   &__lead
     font-size: clamp(1rem, 1.8vw, 1.2rem)
     line-height: 1.7
-    color: rgba($color-blanclab, 0.75)
-    max-width: 42rem
+    color: rgba($color-blanclab, 0.72)
+    max-width: 44rem
 
     strong
       color: $color-blanclab
@@ -163,42 +159,41 @@ $mdl-sticky-height: 100svh
 .mdl-chapter
   background-color: $color-bleulab
   color: $color-blanclab
-  padding: 5rem 1.5rem 0
+  padding: 5rem $mdl-padding-h 0
 
   &__header
-    max-width: 52rem
-    margin: 0 auto 1.5rem
+    max-width: 60rem
+    margin: 0 auto 1.25rem
     display: flex
     align-items: baseline
     gap: 1.5rem
 
     @include media-breakpoint-down(sm)
       flex-direction: column
-      gap: 0.5rem
+      gap: 0.4rem
 
   &__number
     font-family: $heading-font-family
-    font-size: 0.75rem
+    font-size: 0.7rem
     font-weight: 700
-    letter-spacing: 0.15em
+    letter-spacing: 0.18em
     color: $color-vertlab
     text-transform: uppercase
     flex-shrink: 0
 
   &__title
     font-family: $heading-font-family
-    font-size: clamp(1.6rem, 3.5vw, 2.6rem)
+    font-size: clamp(1.5rem, 3vw, 2.4rem)
     font-weight: 800
     line-height: 1.1
     letter-spacing: -0.01em
 
   &__intro
-    max-width: 52rem
-    margin: 0 auto 4rem
-    font-size: clamp(0.95rem, 1.5vw, 1.1rem)
+    max-width: 60rem
+    margin: 0 auto 3rem
+    font-size: clamp(0.95rem, 1.4vw, 1.05rem)
     line-height: 1.75
-    color: rgba($color-blanclab, 0.7)
-    // Alignement visuel avec le titre (compense le numéro + gap)
+    color: rgba($color-blanclab, 0.65)
     padding-left: 3.5rem
 
     @include media-breakpoint-down(sm)
@@ -206,38 +201,62 @@ $mdl-sticky-height: 100svh
 
 
 // ── Scrolly container ────────────────────────────────────────
+// Sur desktop : flex-row, sticky à gauche, steps à droite
+// Sur mobile  : flex-column, sticky au-dessus
 .mdl-scrolly
   position: relative
+  background-color: $color-bleulab
+
+  @include media-breakpoint-up(md)
+    display: flex
+    flex-direction: row
+    align-items: flex-start
+    padding: 0 $mdl-padding-h
 
 
-// ── Sticky visual ────────────────────────────────────────────
+// ── Sticky — colonne visuelle ─────────────────────────────────
 .mdl-sticky
-  position: -webkit-sticky
-  position: sticky
-  top: 0
+  // Mobile : bloc normal, centré, avant le texte
+  position: relative
   width: 100%
-  height: $mdl-sticky-height
-  z-index: 0
-  overflow: hidden
-  background-color: darken($color-bleulab, 5%)
-  transform: translateZ(0)           // force le compositing GPU
+  padding: 2rem $mdl-padding-h
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 1rem
 
-  &__media
-    position: absolute
-    inset: 0
+  // Desktop : colonne gauche, collante
+  @include media-breakpoint-up(md)
+    position: sticky
+    top: 2rem                          // offset par rapport au haut du viewport
+    width: $mdl-col-media
+    flex-shrink: 0
+    padding: 4rem $mdl-gap 4rem 0     // marge droite = gouttière
+    align-self: flex-start            // CRUCIAL pour que sticky fonctionne dans un flex
+
+  // Le cadre qui contient réellement l'image/vidéo
+  &__frame
     width: 100%
-    height: 100%
+    display: flex
+    align-items: center
+    justify-content: center
+    // Pas de height fixe : on laisse le média dicter sa propre hauteur
+    // containé sans rognure grâce à object-fit: contain ci-dessous
 
   &__img,
   &__video
     width: 100%
-    height: 100%
-    object-fit: cover
+    height: auto                       // hauteur naturelle du média
+    max-height: 80svh                  // plafond pour éviter les images trop hautes
+    object-fit: contain                // ← clé : pas de rognure, marges automatiques
     display: block
+    border-radius: 4px
     opacity: 0
     transition: opacity $mdl-transition
+    // Légère ombre pour détacher le visuel du fond sombre
+    box-shadow: 0 8px 48px rgba(darken($color-bleulab, 8%), 0.7)
 
-  // Affichage conditionnel piloté par data-active-type (mis à jour en JS)
+  // Affichage conditionnel piloté par data-active-type (JS)
   &[data-active-type="image"] &__img
     opacity: 1
 
@@ -250,101 +269,88 @@ $mdl-sticky-height: 100svh
   &[data-active-type="video"] &__img
     opacity: 0
 
-  // Dégradé pour la lisibilité du texte superposé
-  &__overlay
-    position: absolute
-    inset: 0
-    background: linear-gradient(to bottom, rgba($color-bleulab, 0.35) 0%, rgba($color-bleulab, 0.1) 40%, rgba($color-bleulab, 0.6) 100%)
-    pointer-events: none
-
-  // Label contextuel flottant (partenaire, format…)
+  // Label contextuel sous le visuel
   &__label
-    position: absolute
-    top: 1.5rem
-    left: 1.5rem
-    z-index: 2
-    pointer-events: none
+    margin: 0
+    text-align: center
+
+    @include media-breakpoint-up(md)
+      text-align: left
 
   &__label-text
     display: inline-block
     font-family: $heading-font-family
-    font-size: 0.72rem
+    font-size: 0.68rem
     font-weight: 700
-    letter-spacing: 0.1em
+    letter-spacing: 0.12em
     text-transform: uppercase
-    color: rgba($color-blanclab, 0.85)
-    background: rgba($color-bleulab, 0.55)
-    padding: 0.3em 0.75em
-    border-radius: 2rem
-    backdrop-filter: blur(6px)
-    -webkit-backdrop-filter: blur(6px)
+    color: rgba($color-blanclab, 0.5)
     transition: opacity $mdl-transition
 
 
-// ── Steps ────────────────────────────────────────────────────
+// ── Steps — colonne texte ─────────────────────────────────────
 .mdl-steps
   position: relative
   z-index: 2
-  padding: 0 1.5rem
-  max-width: $mdl-step-max-width
-  // Colonne décalée à droite pour laisser voir le visuel
-  margin-left: auto
-  margin-right: 3rem
+  padding: 0 $mdl-padding-h 0
 
-  @include media-breakpoint-down(md)
-    margin-left: auto
-    margin-right: auto
-    max-width: 32rem
-
-  @include media-breakpoint-down(sm)
-    margin: 0
-    padding: 0 1rem
-    max-width: 100%
+  @include media-breakpoint-up(md)
+    width: $mdl-col-text
+    flex-shrink: 0
+    padding: 0
+    // Décalage vertical pour que le premier step commence face au visuel
+    padding-top: 2rem
 
 .mdl-step
-  min-height: 85svh
   display: flex
   align-items: center
-  padding: 4rem 0
+  padding: 3rem 0
+  // La hauteur minimale crée le "défilement" entre les steps
+  min-height: 60svh
 
   &:first-child
-    padding-top: 10rem
+    padding-top: 6rem
 
   &:last-child
-    padding-bottom: 10rem
+    padding-bottom: 8rem
 
   @include media-breakpoint-down(sm)
-    min-height: 60svh
-    align-items: flex-end
-    padding-bottom: 3rem
+    min-height: 30svh
+    padding: 2rem 0
+
+    &:first-child
+      padding-top: 3rem
+
+    &:last-child
+      padding-bottom: 4rem
 
   // Bulle de texte
   &__inner
-    background-color: rgba($color-bleulab, 0.9)
+    width: 100%
+    padding: 1.5rem 1.75rem
     border-left: 3px solid transparent
     border-radius: 2px
-    padding: 1.5rem 1.75rem
-    backdrop-filter: blur(8px)
-    -webkit-backdrop-filter: blur(8px)
-    transition: border-color $mdl-transition, background-color $mdl-transition, transform $mdl-transition, box-shadow $mdl-transition
-    transform: translateX(0.5rem)
-    box-shadow: 0 4px 24px rgba($color-bleulab, 0.5)
+    transition: border-color $mdl-transition, opacity $mdl-transition, transform $mdl-transition
+    opacity: 0.45
+    transform: translateX(0.75rem)
 
     @include media-breakpoint-down(sm)
       padding: 1.25rem
+      // Sur mobile, les steps n'ont pas de décalage latéral
+      transform: none
+      opacity: 0.7
 
   // Step actif
   &.is-active &__inner
     border-color: $color-vertlab
-    background-color: rgba($color-bleulab, 0.97)
+    opacity: 1
     transform: translateX(0)
-    box-shadow: 0 8px 40px rgba($color-bleulab, 0.7), -4px 0 0 $color-vertlab
 
   &__title
     font-family: $heading-font-family
-    font-size: 1.1rem
+    font-size: 1.05rem
     font-weight: 700
-    line-height: 1.25
+    line-height: 1.3
     margin-bottom: 0.75rem
     color: $color-blanclab
 
@@ -352,14 +358,11 @@ $mdl-sticky-height: 100svh
       font-style: italic
       color: $color-vertlab
 
-  // Paragraphes à l'intérieur des steps
-  // Note : on cible .mdl-step p et non le sélecteur global p
-  // pour ne pas interférer avec les autres styles Osuny
   p
-    font-size: 0.95rem
-    line-height: 1.7
-    color: rgba($color-blanclab, 0.75)
-    margin-bottom: 0.75rem
+    font-size: 0.92rem
+    line-height: 1.72
+    color: rgba($color-blanclab, 0.68)
+    margin-bottom: 0.65rem
 
     &:last-child
       margin-bottom: 0
@@ -370,23 +373,23 @@ $mdl-sticky-height: 100svh
 
     em
       font-style: italic
-      color: rgba($color-blanclab, 0.9)
+      color: rgba($color-blanclab, 0.88)
 
 
 // ── Outro ────────────────────────────────────────────────────
 .mdl-outro
   background-color: $color-bleulab
   color: $color-blanclab
-  padding: 6rem 1.5rem
+  padding: 6rem $mdl-padding-h
 
   &__inner
-    max-width: 52rem
+    max-width: 60rem
     margin: 0 auto
 
   &__text
-    font-size: 1.05rem
+    font-size: 1rem
     line-height: 1.7
-    color: rgba($color-blanclab, 0.5)
+    color: rgba($color-blanclab, 0.45)
 
 
 // ── Accessibilité : reduced motion ───────────────────────────
@@ -396,3 +399,4 @@ $mdl-sticky-height: 100svh
   .mdl-step__inner,
   .mdl-sticky__label-text
     transition: none
+
