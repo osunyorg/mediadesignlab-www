@@ -284,3 +284,145 @@ $mdl-padding-h: 2.5rem   // padding horizontal global de la section
   .mdl-step__inner,
   .mdl-sticky__label-text
     transition: none
+
+
+// ─────────────────────────────────────────────────────────────
+// Media Design Lab — Bloc prototype pleine largeur
+// À ajouter à la suite du bloc scrollytelling dans _style.sass
+// ─────────────────────────────────────────────────────────────
+
+// ── Bloc prototype ───────────────────────────────────────────
+// Pleine largeur, hors du pattern sticky/steps.
+// Occupe 100svh pour que le prototype ait de l'espace.
+
+.mdl-proto-block
+  background-color: $color-bleulab
+  color: $color-blanclab
+  padding: 4rem $mdl-padding-h 3rem
+  // Séparation visuelle du scrollytelling au-dessus
+  border-top: 1px solid rgba($color-blanclab, 0.1)
+
+  &__header
+    max-width: 60rem
+    margin: 0 auto 2rem
+    display: flex
+    flex-direction: column
+    gap: 0.5rem
+
+  &__label
+    font-family: $heading-font-family
+    font-size: 0.7rem
+    font-weight: 700
+    letter-spacing: 0.15em
+    text-transform: uppercase
+    color: $color-vertlab
+
+  &__title
+    font-family: $heading-font-family
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem)
+    font-weight: 800
+    line-height: 1.15
+    letter-spacing: -0.01em
+
+  &__hint
+    font-size: 0.88rem
+    color: rgba($color-blanclab, 0.5)
+    display: flex
+    align-items: center
+    gap: 1.5rem
+    flex-wrap: wrap
+
+  // Bouton "Continuer" — caché par défaut, affiché quand le scroll est capturé
+  &__close
+    display: none
+    font-family: $heading-font-family
+    font-size: 0.78rem
+    font-weight: 700
+    letter-spacing: 0.08em
+    text-transform: uppercase
+    color: $color-bleulab
+    background-color: $color-vertlab
+    border: none
+    padding: 0.4em 1em
+    border-radius: 2rem
+    cursor: pointer
+    transition: opacity 0.2s
+
+    &:hover
+      opacity: 0.8
+
+    .mdl-proto-block.is-capturing-scroll &
+      display: inline-block
+
+  // Cadre de l'iframe
+  &__frame-wrap
+    max-width: 60rem
+    margin: 0 auto
+    // Ratio portrait smartphone (environ 9:19.5 pour un iPhone récent)
+    // On peut ajuster selon les dimensions cibles du prototype
+    position: relative
+    width: 100%
+    // Hauteur fixe en svh pour un rendu confortable sur tous les écrans
+    height: 85svh
+    border-radius: 12px
+    overflow: hidden
+    background-color: darken($color-bleulab, 8%)
+    box-shadow: 0 16px 64px rgba(darken($color-bleulab, 15%), 0.6)
+
+    // Sur desktop : affichage centré en format "téléphone"
+    // pour respecter le rendu mockup du prototype
+    @include media-breakpoint-up(md)
+      // Largeur réduite sur desktop pour simuler un smartphone centré
+      max-width: 400px
+      height: 85svh
+
+  &__iframe
+    width: 100%
+    height: 100%
+    border: none
+    display: block
+    border-radius: 12px
+
+
+// ── Lien de repli mobile ──────────────────────────────────────
+// Affiché dans le step du scrollytelling sur mobile
+// pour offrir une alternative à l'iframe
+
+.mdl-step__cta
+  margin-top: 1rem
+
+.mdl-proto-link
+  display: inline-flex
+  align-items: center
+  gap: 0.4em
+  font-family: $heading-font-family
+  font-size: 0.82rem
+  font-weight: 700
+  letter-spacing: 0.06em
+  text-transform: uppercase
+  color: $color-vertlab
+  text-decoration: none
+  border: 1px solid rgba($color-vertlab, 0.4)
+  padding: 0.45em 1em
+  border-radius: 2rem
+  transition: background-color 0.2s, color 0.2s
+
+  &:hover
+    background-color: $color-vertlab
+    color: $color-bleulab
+    border-color: $color-vertlab
+
+  // Sur desktop, le prototype est visible en iframe → on peut masquer le lien
+  @include media-breakpoint-up(md)
+    display: none
+
+
+// ── État "scroll capturé" ─────────────────────────────────────
+// Quand l'utilisateur interagit avec l'iframe, le scroll de la page
+// est suspendu et le bouton "Continuer" apparaît
+.mdl-proto-block.is-capturing-scroll
+  // Indicateur visuel subtil que le contexte a changé
+  .mdl-proto-block__frame-wrap
+    box-shadow: 0 0 0 2px $color-vertlab, 0 16px 64px rgba(darken($color-bleulab, 15%), 0.6)
+
+    
