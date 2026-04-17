@@ -13,3 +13,4 @@ allowed_domains:
   - "www.youtube-nocookie.com"
   - "media-design-lab.notion.site"
   - "github.com"
+  - "raw.githubusercontent.com"
