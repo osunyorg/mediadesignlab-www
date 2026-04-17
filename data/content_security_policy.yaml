@@ -12,4 +12,5 @@ allowed_domains:
   - "youtube-nocookie.com"
   - "www.youtube-nocookie.com"
   - "media-design-lab.notion.site"
+  - "documents.karl-pineau.fr"
   - "raw.githubusercontent.com"
