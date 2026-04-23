@@ -57,6 +57,74 @@ header
     display: block
 
 
+// ─────────────────────────────────────────────
+// Table des matières — variante V1 "Sobre & structuré"
+// À intégrer dans _style.sass
+// ─────────────────────────────────────────────
+
+.toc-container
+  margin-top: 8px
+
+  // Bouton "Fermer" — masqué dans cette variante (contextuel)
+  button
+    display: none
+
+  .toc-title
+    display: block
+    font-size: 0.6875rem       // ~11px
+    font-weight: 600
+    letter-spacing: 0.12em
+    text-transform: uppercase
+    color: $color-grislab
+    margin-bottom: 8px
+
+  nav.toc ol
+    list-style: none
+    counter-reset: toc-counter
+    padding: 0
+    margin: 0
+    border-top: 1px solid rgba($color-bleulab, 0.12)
+
+  nav.toc ol li
+    counter-increment: toc-counter
+    border-bottom: 1px solid rgba($color-bleulab, 0.12)
+
+    a
+      display: flex
+      align-items: baseline
+      gap: 10px
+      padding: 8px 0
+      text-decoration: none
+      color: $color-bleulab
+      font-size: 0.75rem        // ~12px
+      line-height: 1.45
+      transition: color 0.15s ease
+
+      // Numéro auto-généré via CSS counter
+      &::before
+        content: counter(toc-counter, decimal-leading-zero)
+        font-size: 0.5625rem    // ~9px
+        font-weight: 600
+        color: rgba($color-bleulab, 0.3)
+        flex-shrink: 0
+        transition: color 0.15s ease
+
+      &:hover,
+      &:focus-visible
+        color: $color-vertlab
+
+        &::before
+          color: $color-vertlab
+
+      // État actif (section en cours de lecture)
+      &.active,
+      &[aria-current="true"]
+        color: $color-vertlab
+        font-weight: 500
+
+        &::before
+          color: $color-vertlab
+    
 // Partie provisoire pour scrollama
 #scrolly
   position: relative
