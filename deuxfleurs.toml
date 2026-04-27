@@ -13,3 +13,28 @@ Cache-Control = "max-age=31536000, no-transform, public"
 for = ["**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.webp"]
 [headers.values]
 Cache-Control = "max-age=31536000, no-transform, public"
+
+[[redirects]]
+from = "/actualites/2025-12-12-osint-du-journalisme-au-design/index.html"
+to = "/actualites/2024-10-21-osint-du-journalisme-au-design/"
+
+[[redirects]]
+from = "/actualites/2025-12-13-presentation-du-lab-2025/index.html"
+to = "/actualites/2025-12-15-presentation-du-lab-2025/"
+
+[[redirects]]
+from = "/projets/2026-les-projets-du-lab/index.html"
+to = "/projets/2023-biais-algorithme-caf/"
+
+[[redirects]]
+from = "/projets/2026-chronologie-du-design-editorial/index.html"
+to = "/projets/2026-chronologie-du-design-editorial-numerique/"
+
+[[redirects]]
+from = "/archives-expositions/index.html"
+to = "/expositions/archives-expositions/"
+
+[[redirects]]
+from = "/projets/2026-le-media-pour-les-medias/index.html"
+to = "/projets/2026-scrollytelling-project-example/"
+
