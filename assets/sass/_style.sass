@@ -185,3 +185,174 @@ header
     &.is-active p
       background-color: goldenrod
       color: #3b3b3b
+
+// ====================================================
+// Cartes PFE — appel à projets de fin d'études
+// S'applique uniquement au bloc <div class="cartes-pfe">
+// de la page actualités du 13/05/2026
+// ====================================================
+
+.cartes-pfe
+  $filet-leger: rgba($color-bleulab, 0.15)
+
+  // ---------- Grille
+  .grille
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+    gap: 24px
+
+    // Les cartes projets tiennent en ligne horizontale dès 1000px
+    @media (min-width: 1000px)
+      grid-template-columns: repeat(3, 1fr)
+
+      .carte.gabarit
+        grid-column: 1 / 2
+
+  // ---------- Carte projet
+  .carte
+    background: $color-blanclab
+    border: 1px solid $color-border
+    display: flex
+    flex-direction: column
+    overflow: hidden
+
+    .visuel
+      position: relative
+      aspect-ratio: 16 / 10
+      background: $color-bleulab
+
+      img
+        width: 100%
+        height: 100%
+        object-fit: cover
+        object-position: top
+        display: block
+
+    .theme
+      position: absolute
+      top: 12px
+      left: 12px
+      background: $color-vertlab
+      color: $color-bleulab
+      font-size: 11px
+      font-weight: 700
+      letter-spacing: 0.1em
+      text-transform: uppercase
+      padding: 5px 10px 4px
+
+    .corps
+      padding: 20px 20px 0
+      flex: 1
+
+    .titre-ligne
+      display: flex
+      flex-wrap: wrap
+      align-items: baseline
+      gap: 4px 10px
+      padding-bottom: 14px
+      margin-bottom: 16px
+      border-bottom: 1px solid $filet-leger
+
+    h2
+      font-size: 19px
+      font-weight: 700
+      letter-spacing: -0.01em
+      white-space: nowrap
+
+    .baseline
+      font-size: 12.5px
+      color: $color-grislab
+
+    // Pied : étudiant·e
+    .pied
+      margin-top: 22px
+      padding: 14px 20px
+      border-top: 1px solid $filet-leger
+      display: flex
+      align-items: center
+      gap: 12px
+
+      img
+        width: 42px
+        height: 42px
+        border-radius: 50%
+        object-fit: cover
+        flex-shrink: 0
+
+      .qui
+        flex: 1
+        min-width: 0
+
+      .nom
+        font-weight: 700
+        font-size: 14px
+
+      .promo
+        font-size: 12px
+        color: $color-grislab
+
+  // ---------- Structure Q / R — façon interview
+  .qr
+    display: grid
+    grid-template-columns: 30px 1fr
+    gap: 0 12px
+
+    + .qr
+      margin-top: 18px
+
+    .lettre
+      font-size: 21px
+      line-height: 1
+      font-weight: 700
+      color: $color-rougelab
+      padding-top: 1px
+
+    &.question .texte
+      font-weight: 700
+      font-size: 16.5px
+      line-height: 1.28
+
+    &.reponse .texte
+      font-size: 14px
+      color: rgba($color-bleulab, 0.82)
+
+      strong
+        font-weight: 700
+        color: $color-bleulab
+
+  // ---------- Carte gabarit (à dupliquer, à retirer en production)
+  .carte.gabarit
+    border-style: dashed
+    background: transparent
+    color: $color-grislab
+
+    .visuel
+      background: repeating-linear-gradient(-45deg, #eef1f0 0 10px, #f8faf9 10px 20px)
+      display: flex
+      align-items: center
+      justify-content: center
+
+      span
+        font-size: 13px
+        color: $color-grislab
+        background: $color-blanclab
+        padding: 6px 12px
+
+    .pied .rond
+      width: 42px
+      height: 42px
+      border-radius: 50%
+      border: 1px dashed $color-grislab
+      flex-shrink: 0
+
+    .texte,
+    h2
+      color: $color-grislab
+
+  // ---------- Impression
+  @media print
+    .carte
+      break-inside: avoid
+
+    .carte.gabarit
+      display: none
