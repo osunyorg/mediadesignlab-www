@@ -31,6 +31,10 @@ from = "/projets/2026-chronologie-du-design-editorial/index.html"
 to = "/projets/2026-chronologie-du-design-editorial-numerique/"
 
 [[redirects]]
+from = "/fichiers/2026/index.html"
+to = "/fichiers/2026/guide-des-etudes-apprentissage-25-27-francaispdf/"
+
+[[redirects]]
 from = "/archives-expositions/index.html"
 to = "/expositions/archives-expositions/"
 
